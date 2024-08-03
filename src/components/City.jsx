@@ -1,12 +1,5 @@
 import styles from "./City.module.css";
-
-const formatDate = (date) =>
-  new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    weekday: "long",
-  }).format(new Date(date));
+import { formatDate } from "../utils.js";
 
 function City() {
   // TEMP DATA
