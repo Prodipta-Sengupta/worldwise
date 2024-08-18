@@ -1,19 +1,26 @@
 import styles from "./City.module.css";
 import { formatDate } from "../utils.js";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useCities } from "../contexts/CitiesContext";
+import { useEffect } from "react";
+import Spinner from "./Spinner";
+import BackButton from "./BackButton.jsx";
 function City() {
-  // TEMP DATA
-  const currentCity = {
-    cityName: "Lisbon",
-    emoji: "🇵🇹",
-    date: "2027-10-31T15:59:59.138Z",
-    notes: "My favorite city so far!",
-  };
+  const { currentCity, getCity, isLoading } = useCities();
+  const { id } = useParams();
+
+  useEffect(() => {
+    getCity(id);
+  }, [id]);
 
   const { cityName, emoji, date, notes } = currentCity;
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const lat = searchParams.get("lat");
   const lng = searchParams.get("lng");
+
+  if (isLoading) {
+    return <Spinner></Spinner>;
+  }
   return (
     <div className={styles.city}>
       <div className={styles.row}>
@@ -44,6 +51,9 @@ function City() {
         >
           Check out {cityName} on Wikipedia &rarr;
         </a>
+      </div>
+      <div>
+        <BackButton></BackButton>
       </div>
     </div>
   );
