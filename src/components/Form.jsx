@@ -8,6 +8,13 @@ import BackButton from "./BackButton";
 import useUrlPosition from "../hooks/useUrlPosition";
 import Message from "./Message";
 import Spinner from "./Spinner";
+import DatePicker from "react-date-picker";
+import "react-date-picker/dist/DatePicker.css";
+import "react-calendar/dist/Calendar.css";
+
+import { useNavigate } from "react-router-dom";
+import { useCities } from "../contexts/CitiesContext";
+
 export function convertToEmoji(countryCode) {
   const codePoints = countryCode
     .toUpperCase()
@@ -15,7 +22,6 @@ export function convertToEmoji(countryCode) {
     .map((char) => 127397 + char.charCodeAt());
   return String.fromCodePoint(...codePoints);
 }
-
 function Form() {
   const [cityName, setCityName] = useState("");
   const [country, setCountry] = useState("");
@@ -25,6 +31,24 @@ function Form() {
   const [isLoading, setIsLoading] = useState(false);
   const [emoji, setEmoji] = useState("");
   const [geoCodingError, setGeoCodingError] = useState(null);
+  const navigate = useNavigate();
+  const { createCity } = useCities();
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!cityName || !country) return;
+    const newCity = {
+      cityName,
+      country,
+      date,
+      notes,
+      position: {
+        lat,
+        lng,
+      },
+    };
+    await createCity(newCity);
+    navigate("/app/cities", { replace: true });
+  }
   useEffect(() => {
     if (!lat || !lng) return;
     try {
@@ -62,7 +86,10 @@ function Form() {
   if (isLoading) return <Spinner></Spinner>;
   if (geoCodingError) return <Message message={geoCodingError}></Message>;
   return (
-    <form className={styles.form}>
+    <form
+      className={`${styles.form} ${isLoading && styles.loading}`}
+      onSubmit={handleSubmit}
+    >
       <div className={styles.row}>
         <label htmlFor="cityName">City name</label>
         <input
@@ -75,11 +102,17 @@ function Form() {
 
       <div className={styles.row}>
         <label htmlFor="date">When did you go to {cityName}?</label>
-        <input
+        {/* <input
           id="date"
           onChange={(e) => setDate(e.target.value)}
           value={date}
-        />
+        /> */}
+        <DatePicker
+          id="date"
+          onChange={setDate}
+          value={date}
+          format="dd/MM/yyyy"
+        ></DatePicker>
       </div>
 
       <div className={styles.row}>
