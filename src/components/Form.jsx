@@ -26,6 +26,7 @@ function Form() {
   const [emoji, setEmoji] = useState("");
   const [geoCodingError, setGeoCodingError] = useState(null);
   useEffect(() => {
+    if (!lat || !lng) return;
     try {
       setIsLoading(true);
       fetch(
@@ -54,6 +55,10 @@ function Form() {
       setIsLoading(false);
     }
   }, [lat, lng]);
+  if (!lat || !lng)
+    return (
+      <Message message="Click somewhere on the map to get a city name."></Message>
+    );
   if (isLoading) return <Spinner></Spinner>;
   if (geoCodingError) return <Message message={geoCodingError}></Message>;
   return (
