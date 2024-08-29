@@ -49,13 +49,12 @@ function Form() {
     await createCity(newCity);
     navigate("/app/cities", { replace: true });
   }
+  const REVERSE_GEOCODE_URL = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`;
   useEffect(() => {
     if (!lat || !lng) return;
     try {
       setIsLoading(true);
-      fetch(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
-      )
+      fetch(REVERSE_GEOCODE_URL)
         .then((response) => response.json())
         .then((data) => {
           try {
