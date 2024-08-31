@@ -1,44 +1,72 @@
 import { createContext } from "react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useContext } from "react";
+import { useReducer } from "react";
 
 const CitiesContext = createContext();
 
 function CitiesProvider({ children }) {
-  const [cities, setCities] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentCity, setCurrentCity] = useState({});
+  const initialState = {
+    cities: [],
+    isLoading: false,
+    currentCity: {},
+  };
+  function reducer(state, action) {
+    switch (action.type) {
+      case "SET_CITIES":
+        return {
+          ...state,
+          cities: action.payload,
+        };
+      case "SET_IS_LOADING":
+        return {
+          ...state,
+          isLoading: action.payload,
+        };
+      case "SET_CURRENT_CITY":
+        return {
+          ...state,
+          currentCity: action.payload,
+        };
+      default:
+        return state;
+    }
+  }
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { cities, isLoading, currentCity } = state;
+
   const BASE_URL = "http://localhost:8000/";
 
   useEffect(() => {
-    setIsLoading(true);
+    dispatch({ type: "SET_IS_LOADING", payload: true });
     try {
       fetch(`${BASE_URL}cities`)
         .then((response) => response.json())
         .then((data) => {
-          setCities(data);
+          dispatch({ type: "SET_CITIES", payload: data });
         });
     } catch (error) {
       alert("There was an error loading the data. Please try again later.");
     } finally {
-      setIsLoading(false);
+      dispatch({ type: "SET_IS_LOADING", payload: false });
     }
   }, []);
 
   async function getCity(id) {
-    setIsLoading(true);
+    dispatch({ type: "SET_IS_LOADING", payload: true });
     try {
       const response = await fetch(`${BASE_URL}cities/${id}`);
       const data = await response.json();
-      setCurrentCity(data);
+      dispatch({ type: "SET_CURRENT_CITY", payload: data });
     } catch (error) {
       alert("There was an error loading the data. Please try again later.");
     } finally {
-      setIsLoading(false);
+      dispatch({ type: "SET_IS_LOADING", payload: false });
     }
   }
   async function createCity(newCity) {
-    setIsLoading(true);
+    dispatch({ type: "SET_IS_LOADING", payload: true });
     try {
       const response = await fetch(`${BASE_URL}cities`, {
         method: "POST",
@@ -48,11 +76,30 @@ function CitiesProvider({ children }) {
         body: JSON.stringify(newCity),
       });
       const data = await response.json();
-      setCities([...cities, data]);
+      dispatch({ type: "SET_CITIES", payload: [...cities, data] });
+      dispatch({ type: "SET_CURRENT_CITY", payload: data });
     } catch (error) {
       alert("There was an error loading the data. Please try again later.");
     } finally {
-      setIsLoading(false);
+      dispatch({ type: "SET_IS_LOADING", payload: false });
+    }
+  }
+
+  async function deleteCity(id) {
+    dispatch({ type: "SET_IS_LOADING", payload: true });
+    try {
+      await fetch(`${BASE_URL}cities/${id}`, {
+        method: "DELETE",
+      });
+      dispatch({
+        type: "SET_CITIES",
+        payload: cities.filter((city) => city.id !== id),
+      });
+      dispatch({ type: "SET_CURRENT_CITY", payload: {} });
+    } catch (error) {
+      alert("There was an error deleting the city. Please try again later.");
+    } finally {
+      dispatch({ type: "SET_IS_LOADING", payload: false });
     }
   }
   return (
@@ -63,6 +110,7 @@ function CitiesProvider({ children }) {
         currentCity,
         getCity,
         createCity,
+        deleteCity,
       }}
     >
       {children}
