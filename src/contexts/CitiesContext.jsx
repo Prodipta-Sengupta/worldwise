@@ -77,6 +77,7 @@ function CitiesProvider({ children }) {
       });
       const data = await response.json();
       dispatch({ type: "SET_CITIES", payload: [...cities, data] });
+      dispatch({ type: "SET_CURRENT_CITY", payload: data });
     } catch (error) {
       alert("There was an error loading the data. Please try again later.");
     } finally {
@@ -94,6 +95,7 @@ function CitiesProvider({ children }) {
         type: "SET_CITIES",
         payload: cities.filter((city) => city.id !== id),
       });
+      dispatch({ type: "SET_CURRENT_CITY", payload: {} });
     } catch (error) {
       alert("There was an error deleting the city. Please try again later.");
     } finally {
