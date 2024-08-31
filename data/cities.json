@@ -37,36 +37,15 @@
       "id": "98443197"
     },
     {
-      "id": "20a6",
-      "cityName": "Valdemorillo",
+      "id": "e8c4",
+      "cityName": "Chodos",
       "country": "Spain",
-      "date": "2024-08-25T17:04:37.922Z",
-      "notes": "Test City",
+      "date": "2024-08-31T08:01:49.057Z",
+      "notes": "Test data",
+      "emoji": "🇪🇸",
       "position": {
-        "lat": "40.49395938772786",
-        "lng": "-4.059448242187501"
-      }
-    },
-    {
-      "id": "3b64",
-      "cityName": "Lucena del Cid",
-      "country": "Spain",
-      "date": "2024-08-25T17:17:40.304Z",
-      "notes": "Test Data",
-      "position": {
-        "lat": "40.197757023665446",
-        "lng": "-0.28839111328125006"
-      }
-    },
-    {
-      "id": "b2a4",
-      "cityName": "San Mateo",
-      "country": "Spain",
-      "date": "2024-08-25T17:17:51.774Z",
-      "notes": "Test Data",
-      "position": {
-        "lat": "40.46575594018434",
-        "lng": "0.10986328125000001"
+        "lat": "40.233411907115055",
+        "lng": "-0.26092529296875006"
       }
     }
   ]
